@@ -2,7 +2,7 @@
 
 > **CNCF Mentorship POC**: *krkn-chaos: Automated Documentation Sync Bot (2026 Term 2)*
 
-[![Watch the demo](image.png)](https://youtu.be/jcEfqS0iDxE)
+[![Watch the demo](https://youtu.be/jcEfqS0iDxE)]
 
 ## Problem
 

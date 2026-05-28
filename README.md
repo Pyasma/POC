@@ -2,8 +2,9 @@
 
 > **CNCF Mentorship POC**: *krkn-chaos: Automated Documentation Sync Bot (2026 Term 2)*
 
-https://youtu.be/jcEfqS0iDxE
 
+
+<iframe width="560" height="315" src="https://youtu.be/jcEfqS0iDxE" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 ## Problem
 
 The [krkn-chaos/website](https://github.com/krkn-chaos/website) repo hosts unified docs for the krkn ecosystem (Hugo/Docsy → [krkn-chaos.dev](https://krkn-chaos.dev)). When a dev changes code, docs are updated **manually** — tedious, easy to forget, error-prone.

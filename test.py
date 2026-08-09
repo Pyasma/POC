@@ -1,46 +1,56 @@
 import os
+import sys
+
 import requests
 from dotenv import load_dotenv
 
 load_dotenv()
 
-# Your specific PR URL
-PR_URL = "https://github.com/krkn-chaos/krkn/pull/1261"
 
-# Shortcut: Simply add '.diff' to the end of the web URL
-DIFF_URL = f"{PR_URL}.diff"
+def get_pr_url() -> str:
+    """Return PR URL from argv or env."""
+    if len(sys.argv) > 1:
+        return sys.argv[1]
 
-# Setup your headers with the token we set up earlier
-token = os.getenv("PA_TOKEN")
-headers = {
-    "Accept": "application/vnd.github+json",
-    "Authorization": f"Bearer {token}"
-}
+    pr_url = os.getenv("PR_URL")
+    if pr_url:
+        return pr_url
 
-def fetch_specific_diff():
-    print(f"Fetching diff from: {DIFF_URL}")
+    raise SystemExit("Provide PR URL as argv[1] or set PR_URL")
+
+
+def fetch_specific_diff() -> str | None:
+    pr_url = get_pr_url()
+    diff_url = f"{pr_url}.diff"
+    token = os.getenv("PA_TOKEN")
+    headers = {
+        "Accept": "application/vnd.github+json",
+        "Authorization": f"Bearer {token}",
+    }
+
+    print(f"Fetching diff from: {diff_url}")
     try:
-        response = requests.get(DIFF_URL, headers=headers)
-        
+        response = requests.get(diff_url, headers=headers, timeout=30)
+
         if response.status_code == 200:
             raw_diff = response.text
-            
-            # Print the first 1000 characters to verify it worked
             print("--- DIFF CAPTURED SUCCESSFULLY ---")
             print(raw_diff[:1000])
-            
-            # Save it locally so you can feed it to your AI agent later
-            with open("krkn_pr_1261.diff", "w", encoding="utf-8") as f:
+
+            output_path = os.getenv("DIFF_OUTPUT", "sample.diff")
+            with open(output_path, "w", encoding="utf-8") as f:
                 f.write(raw_diff)
-                
-            print("\nSaved total diff to 'krkn_pr_1261.diff'")
+
+            print(f"\nSaved total diff to '{output_path}'")
             return raw_diff
-        else:
-            print(f"Failed to fetch diff. Status code: {response.status_code}")
-            print(response.text)
-            
+
+        print(f"Failed to fetch diff. Status code: {response.status_code}")
+        print(response.text)
     except Exception as e:
         print(f"An error occurred: {e}")
+
+    return None
+
 
 if __name__ == "__main__":
     fetch_specific_diff()

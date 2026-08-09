@@ -51,6 +51,35 @@ def fetch_pr_files(token: str, repo_owner: str, repo_name: str, pr_number: int) 
     return [f["filename"] for f in response.json()]
 
 
+def fetch_pr_file_metadata(token: str, repo_owner: str, repo_name: str, pr_number: int) -> list[dict]:
+    """Returns PR file metadata, including patch text when GitHub provides it."""
+    url = f"https://api.github.com/repos/{repo_owner}/{repo_name}/pulls/{pr_number}/files"
+    headers = {
+        "Accept": "application/vnd.github+json",
+        "Authorization": f"Bearer {token}"
+    }
+    response = httprequests.get(url, headers=headers)
+    response.raise_for_status()
+    return response.json()
+
+
+def list_open_pull_requests(token: str, repo_owner: str, repo_name: str, per_page: int = 10) -> list[dict]:
+    """Lists open pull requests for a repo."""
+    url = f"https://api.github.com/repos/{repo_owner}/{repo_name}/pulls"
+    headers = {
+        "Accept": "application/vnd.github+json",
+        "Authorization": f"Bearer {token}"
+    }
+    response = httprequests.get(
+        url,
+        headers=headers,
+        params={"state": "open", "per_page": per_page, "sort": "updated", "direction": "desc"},
+        timeout=30,
+    )
+    response.raise_for_status()
+    return response.json()
+
+
 def classify_change(files: list[str]) -> list[str]:
     """Classifies change type from file paths for Hugo docs generation."""
     types = []
@@ -189,3 +218,21 @@ def post_pr_comment(token: str, repo_owner: str, repo_name: str,
         print(f"💬 Posted comment on PR #{pr_number}")
     else:
         print(f"❌ Failed to post comment: {response.text}")
+
+
+def post_pr_review(token: str, repo_owner: str, repo_name: str,
+                   pr_number: int, body: str, event: str = "COMMENT"):
+    """Posts a PR review. COMMENT creates a review comment on the diff."""
+    url = f"https://api.github.com/repos/{repo_owner}/{repo_name}/pulls/{pr_number}/reviews"
+    headers = {
+        "Accept": "application/vnd.github+json",
+        "Authorization": f"Bearer {token}"
+    }
+    response = httprequests.post(url, headers=headers, json={
+        "body": body,
+        "event": event,
+    })
+    if response.status_code in (200, 201):
+        print(f"🧾 Posted PR review on #{pr_number}")
+    else:
+        print(f"❌ Failed to post PR review: {response.text}")

@@ -4,7 +4,6 @@
 
 ## Video Demo
 
-https://github.com/Pyasma/POC/raw/master/POC.mp4
 
 ## Problem
 

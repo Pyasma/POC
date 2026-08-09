@@ -15,7 +15,8 @@ Kyverno maintainers spend real time on repetitive PR work: review comments, tria
 
 ## Architecture
 
-![Architecture](image.png)
+<img width="978" height="760" alt="image" src="https://github.com/user-attachments/assets/53fb7f3e-e1c1-4350-a4eb-4f2b8eb7ed3d" />
+
 
 ## Workflow
 
